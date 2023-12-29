@@ -37,7 +37,8 @@ jobs:
           ls -l /home/runner/work/sdk/sdk/os/userpatches
 
       - name: "Build generic Armbian X86 SDK"
-        uses: armbian/build@AR-1459
+        #uses: armbian/build@AR-1459
+        uses: igorpecovnik/build@main
         with:
           armbian_target:      "image"                            # repace with `kernel` if you only want to build artifacts
           armbian_branch:      "current"                          # branch: legacy, current, edge, etc.
