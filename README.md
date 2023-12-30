@@ -19,3 +19,5 @@
 - [ ] automated login into user `armbian`
 - [ ] pre-loaded with latest build script
 - [ ] contains all kernel caches
+
+Jira ticket: [[AR-1459](https://armbian.atlassian.net/browse/AR-1459)]
