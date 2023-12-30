@@ -11,3 +11,11 @@
 - provide daily live x86 / arm64 `Armbian Jammy` builds with preinstalled `Docker`
 - provides images in raw `ISO` and `qcow2` virtual disks format
 - shows example of [Armbian GitHub action](.github/workflows/action.yml) for making custom images
+
+## To-do list
+
+- [x] can be made daily / weekly
+- [x] preinstalled Docker
+- [ ] automated login into user `armbian`
+- [ ] pre-loaded with latest build script
+- [ ] contains all kernel caches
