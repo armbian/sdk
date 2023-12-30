@@ -1,4 +1,4 @@
-name: "Build Armbian"
+name: "Build Armbian SDK"
 on:
   workflow_dispatch:
     # manual trigger
