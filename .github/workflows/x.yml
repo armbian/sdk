@@ -1,0 +1,12 @@
+name: "Build Armbian"
+on:
+  workflow_dispatch:
+jobs:
+  build-armbian:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: armbian/build@main
+        with:
+          armbian_token:     "${{ secrets.GITHUB_TOKEN }}"  # GitHub token
+          armbian_release:   "jammy"                        # userspace
+          armbian_board:     "rpi4b"                        # build target
