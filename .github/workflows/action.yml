@@ -11,7 +11,7 @@ jobs:
         board: [uefi-x86,uefi-arm64]
         os: ["bullseye","jammy"]
         
-    name: "Build generic Armbian X86 SDK"
+    name: "Build ${{ matrix.os }} for ${{ matrix.board }}"
     runs-on: ubuntu-latest
     steps:
 
@@ -28,4 +28,4 @@ jobs:
           armbian_compress:           "sha,img,xz"                       # compression method: sha,img,xz
           armbian_version:            "99.99.1"                          # version override
           armbian_extensions:         "docker-ce"                        # list extensions
-          armbian_board:              "uefi-x86"                         # build target from https://github.com/armbian/build/tree/main/config/boards
+          armbian_board:              "${{ matrix.board }}"                         # build target from https://github.com/armbian/build/tree/main/config/boards
