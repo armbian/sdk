@@ -23,24 +23,3 @@ jobs:
           armbian_extensions:  "docker-ce"                        # list extensions
           armbian_userpatches: "${{ env.ARMBIAN_USERPATCHES }}"   #
           armbian_board:       "uefi-x86"                         # build target from https://github.com/armbian/build/tree/main/config/boards
-
-      #- name: "Upload to workflow artifacts"
-      #  if: ${{ inputs.armbian_upload == 'workflow' }}
-      #  uses: actions/upload-artifact@v4
-      #  with:
-      #    name: armbian-artifacts
-      #    path: ${{ env.ARMBIAN_SCRIPT_PATH }}
-
-      - uses: ncipollo/release-action@v1
-        #if: ${{ inputs.armbian_upload == 'releases' }}
-        with:
-          tag: "sdk"
-          name: "Armbian SDK"
-          artifacts: "${{ env.ARMBIAN_SCRIPT_PATH }}/output/images/*"
-          allowUpdates: true
-          removeArtifacts: true
-          replacesArtifacts: true
-          makeLatest: true
-          token: "${{ secrets.GITHUB_TOKEN }}"
-          body: |
-            Unofficial Armbian artifacts with [official tools](https://github.com/armbian/build)
