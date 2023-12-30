@@ -1,4 +1,4 @@
-name: "Build SDK"
+name: "Build Armbian"
 on:
   workflow_dispatch:
 
