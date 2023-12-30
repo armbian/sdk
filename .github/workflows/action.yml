@@ -4,7 +4,13 @@ on:
 
 jobs:
 
-  build:
+  example_matrix:
+    strategy:
+      fail-fast: false
+      matrix:
+        board: [uefi-x86,uefi-arm64]
+        os: ["bullseye","jammy"]
+        
     name: "Build generic Armbian X86 SDK"
     runs-on: ubuntu-latest
     steps:
@@ -17,7 +23,7 @@ jobs:
           armbian_target:             "armbian-images"                   # repace with `kernel` if you only want to build artifacts
           armbian_kernel_branch:      "current"                          # branch: legacy, current, edge, etc.
           armbian_branch:             "main"                             # build framework branch
-          armbian_release:            "jammy"                            # userspace: jammy, bookworm, trixie, etc.
+          armbian_release:            "${{ matrix.os }}"                 # userspace: jammy, bookworm, trixie, etc.
           armbian_ui:                 "minimal"                          # minimal, server, xfce, gnome, etc.
           armbian_compress:           "sha,img,xz"                       # compression method: sha,img,xz
           armbian_version:            "99.99.1"                          # version override
