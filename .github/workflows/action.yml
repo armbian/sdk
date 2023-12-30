@@ -28,13 +28,13 @@ jobs:
       #    clean: false
       #    path: os
 
-      - name: Read version and userpatches path
-        run: |
+      #- name: Read version and userpatches path
+      #  run: |
 
-          ls -l
-          pwd | sed 's/$/\/os\/userpatches/' | sed 's/^/ARMBIAN_USERPATCHES=/' >> $GITHUB_ENV
-          cat os/stable.json | jq '.version' | sed "s/\"//g" | sed 's/^/ARMBIAN_VERSION=/' >> $GITHUB_ENV
-          ls -l /home/runner/work/sdk/sdk/os/userpatches
+          #ls -l
+          #pwd | sed 's/$/\/os\/userpatches/' | sed 's/^/ARMBIAN_USERPATCHES=/' >> $GITHUB_ENV
+          #cat os/stable.json | jq '.version' | sed "s/\"//g" | sed 's/^/ARMBIAN_VERSION=/' >> $GITHUB_ENV
+          #ls -l /home/runner/work/sdk/sdk/os/userpatches
 
       - name: "Build generic Armbian X86 SDK"
         #uses: armbian/build@AR-1459
