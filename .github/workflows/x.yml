@@ -5,7 +5,7 @@ jobs:
   build-armbian:
     runs-on: ubuntu-latest
     steps:
-      - uses: armbian/build@main
+      - uses: armbian/build@AR-1459
         with:
           armbian_token:     "${{ secrets.GITHUB_TOKEN }}"  # GitHub token
           armbian_release:   "jammy"                        # userspace
