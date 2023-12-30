@@ -10,4 +10,4 @@ jobs:
           armbian_token:     "${{ secrets.GITHUB_TOKEN }}"  # GitHub token
           armbian_release:   "jammy"                        # userspace
           armbian_target:    "build"                        # build image
-          armbian_board:     "rpi4b"                        # build target
+          armbian_board:     "uefi-x86"                        # build target
