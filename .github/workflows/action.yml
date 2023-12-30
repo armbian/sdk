@@ -4,7 +4,13 @@ on:
 
 jobs:
 
-  example_matrix:
+  Keep:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: gautamkrishnar/keepalive-workflow@v1 
+
+  Matrix:
+    needs: Keep
     strategy:
       fail-fast: false
       matrix:
