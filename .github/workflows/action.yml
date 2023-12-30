@@ -1,8 +1,10 @@
 name: "Build Armbian"
 on:
   workflow_dispatch:
+    # manual trigger
   schedule:
-    - cron: '0 3 * * *' # Scheduled runs every day at 3am UTC
+    # runs every day at 3am UTC
+    - cron: '0 3 * * *' 
 
 jobs:
 
@@ -10,6 +12,7 @@ jobs:
     name: "Keep alive"
     runs-on: ubuntu-latest
     steps:
+      # checkout this repository
       - uses: actions/checkout@v4
       # prevent GitHub from suspending cronjob
       - uses: gautamkrishnar/keepalive-workflow@v1 
@@ -29,12 +32,11 @@ jobs:
 
       - uses: igorpecovnik/build@main # #uses: armbian/build@AR-1459
         with:
-          armbian_token:              "${{ secrets.GITHUB_TOKEN }}"      # GitHub installation access token
-          armbian_target:             "armbian-images"                   # build configuration from userpatches
-          armbian_kernel_branch:      "current"                          # branch: legacy, current, edge, etc.
-          armbian_branch:             "main"                             # build framework branch
-          armbian_release:            "${{ matrix.os }}"                 # userspace: jammy, bookworm, trixie, etc.
-          armbian_board:              "${{ matrix.board }}"              # build target from https://github.com/armbian/build/tree/main/config/boards
-          armbian_ui:                 "minimal"                          # minimal, server, xfce, gnome, etc.
-          armbian_compress:           "sha,img,xz"                       # compression method: sha,img,xz
-          armbian_extensions:         "docker-ce,sdk${{ matrix.extension }}"                    # enable extensions
+          armbian_token:              "${{ secrets.GITHUB_TOKEN }}"          # GitHub installation access token
+          armbian_target:             "armbian-images"                       # build configuration from userpatches
+          armbian_kernel_branch:      "current"                              # branch: legacy, current, edge, etc.
+          armbian_branch:             "main"                                 # build framework branch
+          armbian_release:            "${{ matrix.os }}"                     # userspace: jammy, bookworm, trixie, etc.
+          armbian_board:              "${{ matrix.board }}"                  # board build target
+          armbian_ui:                 "minimal"                              # minimal, server, xfce, gnome, etc.          
+          armbian_extensions:         "docker-ce,sdk${{ matrix.extension }}" # enable extensions
