@@ -43,3 +43,29 @@ jobs:
           armbian_release_body:       "Virtual images for x86 and arm64"     # release body
           armbian_pgp_key:            "${{ secrets.GPG_KEY1 }}"              # key for signing
           armbian_pgp_password:       "${{ secrets.GPG_PASSPHRASE1 }}"       # password for key
+
+  WSL:
+    # we need to deal with this separate as here we have different extensions
+    needs: Matrix    
+    strategy:
+      fail-fast: false
+      matrix:
+        board: [wsl2-arm64,wsl2-x86]
+        os: ["jammy"]
+        
+    name: "${{ matrix.os }},${{ matrix.board }}${{ matrix.extension }}"
+    runs-on: ubuntu-latest
+    steps:
+
+      - uses: igorpecovnik/build@main # #uses: armbian/build@AR-1459
+        with:
+          # mandatory
+          armbian_token:              "${{ secrets.GITHUB_TOKEN }}"          # GitHub installation access token
+          armbian_target:             "armbian-images"                       # build configuration from userpatches
+          armbian_release:            "${{ matrix.os }}"                     # userspace: jammy, bookworm, trixie, etc.
+          armbian_board:              "${{ matrix.board }}"                  # board build target
+          # optional
+          armbian_release_tittle:     "Armbian SDK"                          # release tittle
+          armbian_release_body:       "Virtual images for x86 and arm64"     # release body
+          armbian_pgp_key:            "${{ secrets.GPG_KEY1 }}"              # key for signing
+          armbian_pgp_password:       "${{ secrets.GPG_PASSPHRASE1 }}"       # password for key
