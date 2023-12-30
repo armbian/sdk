@@ -10,6 +10,7 @@ jobs:
     name: "Keep alive"
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       # prevent GitHub from suspending cronjob
       - uses: gautamkrishnar/keepalive-workflow@v1 
 
