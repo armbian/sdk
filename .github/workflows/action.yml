@@ -1,12 +1,16 @@
 name: "Build Armbian"
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '0 3 * * *' # Scheduled runs every day at 3am UTC
 
 jobs:
 
   Keep:
+    name: "Keep alive"
     runs-on: ubuntu-latest
     steps:
+      # prevent GitHub from suspending cronjob
       - uses: gautamkrishnar/keepalive-workflow@v1 
 
   Matrix:
