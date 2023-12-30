@@ -10,9 +10,9 @@ jobs:
       matrix:
         board: [uefi-x86,uefi-arm64]
         os: ["jammy"]
-        extension: [",image-output-qcow2",""]
+        extension: [", image-output-qcow2",""]
         
-    name: "${{ matrix.os }} for ${{ matrix.board }}${{ matrix.extension }}"
+    name: "${{ matrix.os }}, ${{ matrix.board }}${{ matrix.extension }}"
     runs-on: ubuntu-latest
     steps:
 
