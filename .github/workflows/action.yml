@@ -12,7 +12,7 @@ jobs:
         os: ["jammy"]
         extension: [",image-output-qcow2",""]
         
-    name: "Build ${{ matrix.os }} for ${{ matrix.board }}"
+    name: "${{ matrix.os }} for ${{ matrix.board }}${{ matrix.extension }}"
     runs-on: ubuntu-latest
     steps:
 
