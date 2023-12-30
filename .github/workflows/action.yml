@@ -9,7 +9,7 @@ jobs:
       fail-fast: false
       matrix:
         board: [uefi-x86,uefi-arm64]
-        os: ["bullseye","jammy"]
+        os: ["bookworm","jammy"]
         
     name: "Build ${{ matrix.os }} for ${{ matrix.board }}"
     runs-on: ubuntu-latest
@@ -27,4 +27,4 @@ jobs:
           armbian_board:              "${{ matrix.board }}"              # build target from https://github.com/armbian/build/tree/main/config/boards
           armbian_ui:                 "minimal"                          # minimal, server, xfce, gnome, etc.
           armbian_compress:           "sha,img,xz"                       # compression method: sha,img,xz
-          armbian_extensions:         "docker-ce"                        # enable extensions
+          armbian_extensions:         "docker-ce,sdk"                    # enable extensions
