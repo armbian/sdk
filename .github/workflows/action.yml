@@ -9,33 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      - name: Import GPG key
-        env:
-          GPG_KEY1: ${{ secrets.GPG_KEY1 }}
-        if: env.GPG_KEY1 != null
-        uses: crazy-max/ghaction-import-gpg@v6
-        with:
-          gpg_private_key: ${{ secrets.GPG_KEY1 }}
-          passphrase: ${{ secrets.GPG_PASSPHRASE1 }}
-
-
-
-      #- name: "Checkout userpatches repo: armbian/os"
-      #  uses: actions/checkout@v4
-      #  with:
-      #    repository: armbian/os
-      #    fetch-depth: 0
-      #    clean: false
-      #    path: os
-
-      #- name: Read version and userpatches path
-      #  run: |
-
-          #ls -l
-          #pwd | sed 's/$/\/os\/userpatches/' | sed 's/^/ARMBIAN_USERPATCHES=/' >> $GITHUB_ENV
-          #cat os/stable.json | jq '.version' | sed "s/\"//g" | sed 's/^/ARMBIAN_VERSION=/' >> $GITHUB_ENV
-          #ls -l /home/runner/work/sdk/sdk/os/userpatches
-
       - name: "Build generic Armbian X86 SDK"
         #uses: armbian/build@AR-1459
         uses: igorpecovnik/build@main
@@ -43,20 +16,12 @@ jobs:
           armbian_target:      "image"                            # repace with `kernel` if you only want to build artifacts
           armbian_branch:      "current"                          # branch: legacy, current, edge, etc.
           armbian_release:     "jammy"                            # userspace: jammy, bookworm, trixie, etc.
-          armbian_ui:          "server"                           # minimal, server, xfce, gnome, etc.
+          armbian_ui:          "minimal"                          # minimal, server, xfce, gnome, etc.
           armbian_compress:    "sha,img,xz"                       # compression method: sha,img,xz
           armbian_version:     "${{ env.ARMBIAN_VERSION }}"       # version override
           armbian_extensions:  "docker-ce"                        # list extensions
           armbian_userpatches: "${{ env.ARMBIAN_USERPATCHES }}"   #
           armbian_board:       "uefi-x86"                         # build target from https://github.com/armbian/build/tree/main/config/boards
-
-      - name: Sign
-        env:
-          GPG_PASSPHRASE1: ${{ secrets.GPG_PASSPHRASE1 }}
-        if: env.GPG_PASSPHRASE1 != null
-        run: |
-
-          echo ${{ secrets.GPG_PASSPHRASE1 }} | gpg --passphrase-fd 0 --armor --detach-sign --pinentry-mode loopback --batch --yes ${{ env.ARMBIAN_SCRIPT_PATH }}/output/images/*.img*.xz
 
       #- name: "Upload to workflow artifacts"
       #  if: ${{ inputs.armbian_upload == 'workflow' }}
