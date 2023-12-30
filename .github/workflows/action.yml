@@ -20,13 +20,13 @@ jobs:
 
 
 
-      - name: "Checkout userpatches repo: armbian/os"
-        uses: actions/checkout@v4
-        with:
-          repository: armbian/os
-          fetch-depth: 0
-          clean: false
-          path: os
+      #- name: "Checkout userpatches repo: armbian/os"
+      #  uses: actions/checkout@v4
+      #  with:
+      #    repository: armbian/os
+      #    fetch-depth: 0
+      #    clean: false
+      #    path: os
 
       - name: Read version and userpatches path
         run: |
