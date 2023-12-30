@@ -8,5 +8,5 @@
 
 ## What does this project do?
 
-- builds live x86 / arm64 Armbian Jammy with preinstalled Docker
-- provides images in raw ISO and qcow2 virtual disks format
+- builds live x86 / arm64 `Armbian Jammy` with preinstalled `Docker`
+- provides images in raw `ISO` and `qcow2` virtual disks format
