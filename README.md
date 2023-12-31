@@ -5,7 +5,7 @@
   <br>
   <strong>Armbian SDK</strong><br>
 <br>
-<a href=https://github.com/armbian/sdk/releases/latest><img alt="GitHub Workflow Status" src="https://img.shields.io/github/v/release/armbian/sdk?labelColor=green&color=green&label=Download&style=for-the-badge&logoColor=black"></a>
+<a href=https://github.com/armbian/sdk/releases/latest><img alt="GitHub Workflow Status" src="https://img.shields.io/github/v/release/armbian/sdk?label=Download&style=for-the-badge&logoColor=black"></a>
 </p>
 
 
