@@ -1,10 +1,15 @@
 <p align="center">
   <a href="#build-framework">
    <img src="https://raw.githubusercontent.com/armbian/build/master/.github/armbian-logo.png" alt="Armbian logo" width="144">
-  </a><br>
+  </a>
+  <br>
   <strong>Armbian SDK</strong><br>
 <br>
+<a href=https://github.com/armbian/sdk/releases/latest><img alt="GitHub Workflow Status" src="https://img.shields.io/github/v/release/armbian/sdk?labelColor=green&color=green&label=Download&style=for-the-badge&logoColor=black"></a>
 </p>
+
+
+
 
 ## What does this project do?
 
