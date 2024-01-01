@@ -30,8 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      #- uses: igorpecovnik/build@main
-      - uses: armbian/build@AR-1459
+      - uses: armbian/build@v23.11.1
         with:
           # mandatory
           armbian_token:              "${{ secrets.GITHUB_TOKEN }}"          # GitHub installation access token
