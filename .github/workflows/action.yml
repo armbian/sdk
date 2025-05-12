@@ -24,7 +24,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        board: [uefi-x86,uefi-arm64]
+        board: [uefi-x86]
         os: ["noble"]
         extension: [",image-output-qcow2",""]
         
