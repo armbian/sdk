@@ -11,11 +11,13 @@ jobs:
   Keep:
     name: "Keep alive"
     runs-on: ubuntu-latest
+    permissions:
+      actions: write
     steps:
       # checkout this repository
       - uses: actions/checkout@v4
       # prevent GitHub from suspending cronjob
-      - uses: gautamkrishnar/keepalive-workflow@v1 
+      - uses: liskin/gh-workflow-keepalive@v1
 
   Matrix:
     needs: Keep
