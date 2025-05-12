@@ -25,7 +25,7 @@ jobs:
       fail-fast: false
       matrix:
         board: [uefi-x86,uefi-arm64]
-        os: ["jammy"]
+        os: ["noble"]
         extension: [",image-output-qcow2",""]
         
     name: "${{ matrix.os }},${{ matrix.board }}${{ matrix.extension }}"
