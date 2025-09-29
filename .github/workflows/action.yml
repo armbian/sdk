@@ -29,7 +29,7 @@ jobs:
         extension: [",image-output-qcow2",""]
         
     name: "${{ matrix.os }},${{ matrix.board }}${{ matrix.extension }}"
-    runs-on: ubuntu-latest
+    runs-on: images
     steps:
 
       - uses: armbian/build@sdk
