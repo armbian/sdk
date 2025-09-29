@@ -27,9 +27,13 @@ jobs:
         board: ["uefi-x86","uefi-arm64"]
         os: ["noble","trixie"]
         extension: [",image-output-qcow2",""]
-        
+        include:
+        - board: uefi-x86
+          runner: ubuntu-24.04
+        - board: uefi-arm64
+          runner: ubuntu-22.04-arm
+    runs-on: ${{ matrix.runner }}
     name: "${{ matrix.os }},${{ matrix.board }}${{ matrix.extension }}"
-    runs-on: ubuntu-latest
     steps:
 
       - uses: armbian/build@main
