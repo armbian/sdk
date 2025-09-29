@@ -32,7 +32,7 @@ jobs:
     runs-on: images
     steps:
 
-      - uses: armbian/build@sdk
+      - uses: armbian/build@main
         with:
           # mandatory
           armbian_token:              "${{ secrets.GITHUB_TOKEN }}"          # GitHub installation access token
@@ -40,7 +40,6 @@ jobs:
           armbian_release:            "${{ matrix.os }}"                     # userspace: jammy, bookworm, trixie, etc.
           armbian_board:              "${{ matrix.board }}"                  # board build target
           # optional
-          armbian_release_clean:      "true"
           armbian_ui:                 "minimal"
           armbian_extensions:         "docker-ce,sdk${{ matrix.extension }}" # enable extensions
           armbian_release_tittle:     "Armbian SDK"                          # release tittle
