@@ -43,6 +43,7 @@ jobs:
           armbian_ui:                 "minimal"
           armbian_extensions:         "docker-ce,sdk${{ matrix.extension }}" # enable extensions
           armbian_release_tittle:     "Armbian SDK"                          # release tittle
+          armbian_release_tag:        "${{ github.run_id }}"
           armbian_release_body:       "Virtual images for x86 and arm64"     # release body
           armbian_pgp_key:            "${{ secrets.GPG_KEY1 }}"              # key for signing
           armbian_pgp_password:       "${{ secrets.GPG_PASSPHRASE1 }}"       # password for key
