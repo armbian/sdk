@@ -44,6 +44,7 @@ jobs:
           armbian_release:            "${{ matrix.os }}"                     # userspace: jammy, bookworm, trixie, etc.
           armbian_board:              "${{ matrix.board }}"                  # board build target
           # optional
+          armbian_armbian_branch:     "sdk"
           armbian_ui:                 "minimal"
           armbian_extensions:         "docker-ce,sdk${{ matrix.extension }}" # enable extensions
           armbian_release_tittle:     "Armbian SDK"                          # release tittle
