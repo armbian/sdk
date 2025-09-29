@@ -24,8 +24,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        board: [uefi-x86]
-        os: ["noble"]
+        board: ["uefi-x86","uefi-arm64"]
+        os: ["noble","trixie"]
         extension: [",image-output-qcow2",""]
         
     name: "${{ matrix.os }},${{ matrix.board }}${{ matrix.extension }}"
@@ -41,6 +41,7 @@ jobs:
           armbian_board:              "${{ matrix.board }}"                  # board build target
           # optional
           armbian_release_clean:      "true"
+          armbian_ui:                 "minimal"
           armbian_extensions:         "docker-ce,sdk${{ matrix.extension }}" # enable extensions
           armbian_release_tittle:     "Armbian SDK"                          # release tittle
           armbian_release_body:       "Virtual images for x86 and arm64"     # release body
