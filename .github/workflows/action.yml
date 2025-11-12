@@ -36,7 +36,7 @@ jobs:
     name: "${{ matrix.os }},${{ matrix.board }}${{ matrix.extension }}"
     steps:
 
-      - uses: armbian/build@main
+      - uses: armbian/build@igorpecovnik-patch-3
         with:
           # mandatory
           armbian_token:              "${{ secrets.GITHUB_TOKEN }}"          # GitHub installation access token
