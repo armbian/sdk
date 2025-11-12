@@ -15,7 +15,7 @@
 
 - [x] can be made daily / weekly
 - [x] preinstalled Docker
-- [ ] automated login into user `armbian`
+- [x] automated login into user `armbian`
 - [ ] pre-loaded with latest build script
 - [ ] contains all kernel caches
 
