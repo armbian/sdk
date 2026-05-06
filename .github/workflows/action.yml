@@ -52,3 +52,41 @@ jobs:
           armbian_release_body:       "Virtual images for x86 and arm64"     # release body
           armbian_pgp_key:            "${{ secrets.GPG_KEY1 }}"              # key for signing
           armbian_pgp_password:       "${{ secrets.GPG_PASSPHRASE1 }}"       # password for key
+
+  Aggregate:
+    name: "Aggregate per-cell asset manifests"
+    needs: Matrix
+    if: ${{ always() && !cancelled() }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+
+      - name: Download per-cell manifests from the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          mkdir -p manifests
+          # Each Matrix cell uploads `assets-<board>-<release>-<branch>-<ui>.json`
+          # via the build action's manifest step. Pull all of them.
+          gh release download "${{ github.run_id }}" \
+            --pattern 'assets-*.json' \
+            --dir manifests \
+            --repo "${{ github.repository }}"
+          ls -la manifests/
+
+      - name: Merge into a single armbian-sdk-images.json
+        run: |
+          set -euo pipefail
+          jq -s 'map(.assets) | flatten | {assets: .}' manifests/*.json > armbian-sdk-images.json
+          echo "Merged assets: $(jq '.assets | length' armbian-sdk-images.json)"
+          jq '.assets[] | "\(.board_slug) \(.distro)/\(.branch) \(.variant) \(.file_extension)"' armbian-sdk-images.json | head -20
+
+      - name: Upload merged manifest to the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload "${{ github.run_id }}" armbian-sdk-images.json \
+            --clobber \
+            --repo "${{ github.repository }}"
