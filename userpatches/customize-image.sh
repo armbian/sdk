@@ -10,5 +10,6 @@
 #
 set -euo pipefail
 
-apt-get install -y --no-install-recommends gh
+apt-get update
+apt-get install -y --no-install-recommends git
 install -m 0755 /tmp/overlay/provisioning.sh /root/provisioning.sh
