@@ -36,10 +36,7 @@ jobs:
     name: "${{ matrix.os }},${{ matrix.board }}${{ matrix.extension }}"
     steps:
 
-      # NOTE: temporarily pinned to armbian/build PR #9772 branch so this PR
-      # (and its aggregator) can be tested end-to-end before #9772 lands.
-      # Switch back to @main once that PR is merged.
-      - uses: armbian/build@action-release-assets-manifest
+      - uses: armbian/build@main
         with:
           # mandatory
           armbian_token:              "${{ secrets.GITHUB_TOKEN }}"          # GitHub installation access token
@@ -48,11 +45,40 @@ jobs:
           armbian_board:              "${{ matrix.board }}"                  # board build target
           # optional
           armbian_branch:             "main"
+          armbian_kernel_branch:      "cloud"                                # cloud kernel: smaller, no SBC drivers
           armbian_ui:                 "minimal"
-          armbian_extensions:         "docker-ce,sdk${{ matrix.extension }}" # enable extensions
+          armbian_extensions:         "sdk${{ matrix.extension }}"           # enable extensions
           armbian_release_title:      "Armbian SDK"                          # release title
           armbian_release_tag:        "${{ github.run_id }}"
-          armbian_release_body:       "Virtual images for x86 and arm64"     # release body
+          armbian_release_prerelease: "true"                                    # promoted to a full release by the Aggregate job
+          armbian_release_body:       |                                       # release body
+            Armbian SDK — daily virtual images preloaded with the Armbian development environment.
+
+            ### Targets
+
+            x86 (`uefi-x86`) and arm64 (`uefi-arm64`), built on Ubuntu `noble` and Debian `trixie`, using the `cloud` kernel.
+
+            ### Formats
+
+            Raw `.img.xz` and `.img.qcow2`.
+
+            ### Inside the image
+
+            - **Curated Armbian source tree** pre-cloned into the code-server workspace at `/armbian/code-server/config/workspace/` (`build`, `configng`, `documentation`, `website`, `imager`).
+
+            - **Build dependencies pre-installed.** `./compile.sh requirements` has already run inside the rootfs, so the first build skips the apt phase.
+
+            - **code-server** (browser VS Code) installed on first boot, with the Python extension and the Claude Code CLI pre-provisioned.
+
+            - **SSH ready out of the box.** Maintainer's GitHub public keys baked into both `root` and the `armbian` user via Armbian's `PRESET_*_KEY` firstboot mechanism.
+
+            ### Defaults
+
+            Credentials `armbian` / `armbian`. code-server on port `8443`.
+
+            ### Manifest
+
+            `armbian-images.json` (aggregated across the matrix) and `<image>.assets.json` (per-image) are published alongside the assets for programmatic consumption.
           armbian_pgp_key:            "${{ secrets.GPG_KEY1 }}"              # key for signing
           armbian_pgp_password:       "${{ secrets.GPG_PASSPHRASE1 }}"       # password for key
           # SDK images publish to this repo's GitHub release, not dl.armbian.com.
@@ -99,4 +125,19 @@ jobs:
         run: |
           gh release upload "${{ github.run_id }}" armbian-images.json \
             --clobber \
+            --repo "${{ github.repository }}"
+
+      # Matrix builds publish to GitHub as a pre-release so partial /
+      # in-flight runs aren't surfaced as `latest`. Once the matrix is
+      # green and the aggregated manifest is in place, flip the release
+      # to a normal release. If any matrix cell failed, leave it as a
+      # pre-release so the broken state is visible.
+      - name: Promote release (matrix succeeded)
+        if: ${{ needs.Matrix.result == 'success' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release edit "${{ github.run_id }}" \
+            --prerelease=false \
+            --latest \
             --repo "${{ github.repository }}"
