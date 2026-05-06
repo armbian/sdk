@@ -36,7 +36,10 @@ jobs:
     name: "${{ matrix.os }},${{ matrix.board }}${{ matrix.extension }}"
     steps:
 
-      - uses: armbian/build@main
+      # NOTE: temporarily pinned to armbian/build PR #9772 branch so this PR
+      # (and its aggregator) can be tested end-to-end before #9772 lands.
+      # Switch back to @main once that PR is merged.
+      - uses: armbian/build@action-release-assets-manifest
         with:
           # mandatory
           armbian_token:              "${{ secrets.GITHUB_TOKEN }}"          # GitHub installation access token
@@ -47,8 +50,53 @@ jobs:
           armbian_branch:             "main"
           armbian_ui:                 "minimal"
           armbian_extensions:         "docker-ce,sdk${{ matrix.extension }}" # enable extensions
-          armbian_release_tittle:     "Armbian SDK"                          # release tittle
+          armbian_release_title:      "Armbian SDK"                          # release title
           armbian_release_tag:        "${{ github.run_id }}"
           armbian_release_body:       "Virtual images for x86 and arm64"     # release body
           armbian_pgp_key:            "${{ secrets.GPG_KEY1 }}"              # key for signing
           armbian_pgp_password:       "${{ secrets.GPG_PASSPHRASE1 }}"       # password for key
+          # SDK images publish to this repo's GitHub release, not dl.armbian.com.
+          # Empty `armbian_download_repository` selects the flat URL shape
+          # `<base>/<filename>` and clears the redi_url* fields (no friendly-
+          # redirect convention exists for GitHub releases).
+          armbian_download_base_url:  "https://github.com/${{ github.repository }}/releases/download/${{ github.run_id }}"
+          armbian_download_repository: ""
+
+  Aggregate:
+    name: "Aggregate per-cell asset manifests"
+    needs: Matrix
+    if: ${{ always() && !cancelled() }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+
+      - name: Download per-image manifests from the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          mkdir -p manifests
+          # The build action writes one `<image_filename>.assets.json` per
+          # image artefact (raw + .img.qcow2 + .img.vhdx all coexist when
+          # an image-output-* extension is enabled). Pull all of them.
+          gh release download "${{ github.run_id }}" \
+            --pattern '*.assets.json' \
+            --dir manifests \
+            --repo "${{ github.repository }}"
+          ls -la manifests/
+
+      - name: Merge into a single armbian-images.json
+        run: |
+          set -euo pipefail
+          jq -s 'map(.assets) | flatten | {assets: .}' manifests/*.json > armbian-images.json
+          echo "Merged assets: $(jq '.assets | length' armbian-images.json)"
+          jq '.assets[] | "\(.board_slug) \(.distro)/\(.branch) \(.variant) \(.file_extension)"' armbian-images.json | head -20
+
+      - name: Upload merged manifest to the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload "${{ github.run_id }}" armbian-images.json \
+            --clobber \
+            --repo "${{ github.repository }}"
