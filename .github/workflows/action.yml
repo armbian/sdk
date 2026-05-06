@@ -36,7 +36,10 @@ jobs:
     name: "${{ matrix.os }},${{ matrix.board }}${{ matrix.extension }}"
     steps:
 
-      - uses: armbian/build@main
+      # NOTE: temporarily pinned to armbian/build PR #9772 branch so this PR
+      # (and its aggregator) can be tested end-to-end before #9772 lands.
+      # Switch back to @main once that PR is merged.
+      - uses: armbian/build@action-release-assets-manifest
         with:
           # mandatory
           armbian_token:              "${{ secrets.GITHUB_TOKEN }}"          # GitHub installation access token
@@ -52,6 +55,12 @@ jobs:
           armbian_release_body:       "Virtual images for x86 and arm64"     # release body
           armbian_pgp_key:            "${{ secrets.GPG_KEY1 }}"              # key for signing
           armbian_pgp_password:       "${{ secrets.GPG_PASSPHRASE1 }}"       # password for key
+          # SDK images publish to this repo's GitHub release, not dl.armbian.com.
+          # Empty `armbian_download_repository` selects the flat URL shape
+          # `<base>/<filename>` and clears the redi_url* fields (no friendly-
+          # redirect convention exists for GitHub releases).
+          armbian_download_base_url:  "https://github.com/${{ github.repository }}/releases/download/${{ github.run_id }}"
+          armbian_download_repository: ""
 
   Aggregate:
     name: "Aggregate per-cell asset manifests"
