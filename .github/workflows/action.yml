@@ -86,17 +86,17 @@ jobs:
             --repo "${{ github.repository }}"
           ls -la manifests/
 
-      - name: Merge into a single armbian-sdk-images.json
+      - name: Merge into a single armbian-images.json
         run: |
           set -euo pipefail
-          jq -s 'map(.assets) | flatten | {assets: .}' manifests/*.json > armbian-sdk-images.json
-          echo "Merged assets: $(jq '.assets | length' armbian-sdk-images.json)"
-          jq '.assets[] | "\(.board_slug) \(.distro)/\(.branch) \(.variant) \(.file_extension)"' armbian-sdk-images.json | head -20
+          jq -s 'map(.assets) | flatten | {assets: .}' manifests/*.json > armbian-images.json
+          echo "Merged assets: $(jq '.assets | length' armbian-images.json)"
+          jq '.assets[] | "\(.board_slug) \(.distro)/\(.branch) \(.variant) \(.file_extension)"' armbian-images.json | head -20
 
       - name: Upload merged manifest to the release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release upload "${{ github.run_id }}" armbian-sdk-images.json \
+          gh release upload "${{ github.run_id }}" armbian-images.json \
             --clobber \
             --repo "${{ github.repository }}"
