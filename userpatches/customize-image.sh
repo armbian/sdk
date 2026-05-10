@@ -11,7 +11,7 @@
 set -euo pipefail
 
 apt-get update
-apt-get install -y --no-install-recommends git tig nodejs npm
+apt-get install -y --no-install-recommends git tig nodejs npm armbian-zsh
 install -m 0755 /tmp/overlay/provisioning.sh /root/provisioning.sh
 
 # Pre-install the Claude Code CLI host-side so `claude` is on the
