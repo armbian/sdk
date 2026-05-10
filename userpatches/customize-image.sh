@@ -11,20 +11,14 @@
 set -euo pipefail
 
 apt-get update
-# git is needed below for the workspace clone pass.
-# armbian-config isn't part of the default rootfs in every flavour
-# (notably the minimal/server CLIs), so install it explicitly here so
-# the --api call below resolves.
-apt-get install -y --no-install-recommends git armbian-config
+apt-get install -y --no-install-recommends git tig nodejs npm armbian-zsh
 install -m 0755 /tmp/overlay/provisioning.sh /root/provisioning.sh
 
-# Install zsh via armbian-config's module_zsh. This pulls the
-# armbian-zsh / zsh-common / zsh package set, refreshes /etc/skel
-# from the matching dotfiles, and flips root's login shell to
-# /bin/zsh — the full Armbian-flavoured setup, not just bare apt.
-# Same --api invocation pattern provisioning.sh uses for
-# module_code-server.
-armbian-config --api module_zsh install
+# Pre-install the Claude Code CLI host-side so `claude` is on the
+# armbian user's PATH from a plain SSH session too. (provisioning.sh
+# also installs it inside the code-server container so it shows up in
+# the IDE's integrated terminal — that's a separate npm install.)
+npm install -g @anthropic-ai/claude-code
 
 # Clone a small set of armbian-org repos directly into code-server's
 # workspace so they appear at /config/workspace/<repo> in the IDE. The
