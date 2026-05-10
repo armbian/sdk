@@ -12,7 +12,10 @@ set -euo pipefail
 
 apt-get update
 # git is needed below for the workspace clone pass.
-apt-get install -y --no-install-recommends git
+# armbian-config isn't part of the default rootfs in every flavour
+# (notably the minimal/server CLIs), so install it explicitly here so
+# the --api call below resolves.
+apt-get install -y --no-install-recommends git armbian-config
 install -m 0755 /tmp/overlay/provisioning.sh /root/provisioning.sh
 
 # Install zsh via armbian-config's module_zsh. This pulls the
