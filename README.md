@@ -5,17 +5,16 @@
 
 ## Purpose of This Repository
 
-The **Armbian SDK** publishes ready-to-deploy **Armbian** virtual images preloaded with the toolchain, source repositories, and dependencies needed to develop on the Armbian platform — drop one onto a cloud provider, **Proxmox**, or any **QEMU/KVM**-capable hypervisor and start building immediately.
+The **Armbian SDK** publishes ready-to-deploy generic **Armbian** images preloaded with the toolchain, source repositories, and dependencies needed to develop on the Armbian platform — drop one onto a cloud provider, **Proxmox**, or any **QEMU/KVM**-capable hypervisor and start building immediately.
 
 Daily builds from this repository's [GitHub Action](.github/workflows/action.yml) target **`uefi-x86`** and **`uefi-arm64`** on **Ubuntu Noble** and **Debian Trixie** with the **`cloud`** kernel, published as raw `.img.xz` and `.img.qcow2`.
-
-> **Looking for SBC images?** Use [Armbian Imager](https://github.com/armbian/imager/releases) — these images are virtual machines, not SBC images.
 
 ## Quick Start
 
 Download a `.img.qcow2` from the [latest release](https://github.com/armbian/sdk/releases/latest) and boot it under any QEMU/KVM-capable hypervisor.
 
 - **Default credentials:** `armbian` / `armbian` (configured in [userpatches/firstboot.conf](userpatches/firstboot.conf))
+- **Default shell:** `zsh` for the `armbian` user (set via `PRESET_USER_SHELL` in the same file)
 - **code-server** (browser-based VS Code) on port `8443`
 - **Build framework** checked out at `~/workspace/build`
 
