@@ -1,0 +1,51 @@
+name: "Infrastructure: Dispatch download index update"
+run-name: Dispatch armbian.github.io download-index after ${{ github.event.workflow_run.name || github.workflow }}
+
+# Watches for the SDK build workflow to finish, then fires a
+# repository_dispatch at armbian/armbian.github.io so the download
+# index is regenerated against the freshly published SDK release.
+# Mirrors the peter-evans/repository-dispatch pattern already used
+# by armbian/build (data-sync-board-list.yml) and by the
+# infrastructure-dispatch-to-fork helper.
+on:
+  workflow_run:
+    workflows: ["Build Armbian SDK"]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  dispatch:
+    name: 📢 Trigger download-index regen
+    runs-on: ubuntu-latest
+    # Only fire from the canonical repo (skip forks) AND only when
+    # the upstream build actually succeeded — partial / red matrix
+    # runs leave the release as pre-release and the index would
+    # regenerate against incomplete data. Manual workflow_dispatch
+    # is always allowed for one-off retries.
+    if: >-
+      ${{ github.repository_owner == 'armbian'
+          && (github.event_name == 'workflow_dispatch'
+              || github.event.workflow_run.conclusion == 'success') }}
+    env:
+      DISPATCH_SECRET: ${{ secrets.ACCESS_TOKEN }}
+    steps:
+      - name: Fire repository_dispatch on armbian/armbian.github.io
+        # Soft-skip when the secret isn't configured (e.g. on a fresh
+        # repo clone before the maintainer has wired ACCESS_TOKEN)
+        # rather than failing red.
+        if: ${{ env.DISPATCH_SECRET != '' }}
+        uses: peter-evans/repository-dispatch@v4
+        with:
+          token: ${{ env.DISPATCH_SECRET }}
+          repository: armbian/armbian.github.io
+          event-type: "Data: Update download index"
+          client-payload: >-
+            {
+              "source_workflow": "${{ github.event.workflow_run.name || github.workflow }}",
+              "source_run_id":   "${{ github.event.workflow_run.id   || github.run_id }}",
+              "source_repo":     "${{ github.repository }}",
+              "source_sha":      "${{ github.event.workflow_run.head_sha || github.sha }}"
+            }
