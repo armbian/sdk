@@ -11,8 +11,17 @@
 set -euo pipefail
 
 apt-get update
+# git is needed below for the workspace clone pass.
 apt-get install -y --no-install-recommends git
 install -m 0755 /tmp/overlay/provisioning.sh /root/provisioning.sh
+
+# Install zsh via armbian-config's module_zsh. This pulls the
+# armbian-zsh / zsh-common / zsh package set, refreshes /etc/skel
+# from the matching dotfiles, and flips root's login shell to
+# /bin/zsh — the full Armbian-flavoured setup, not just bare apt.
+# Same --api invocation pattern provisioning.sh uses for
+# module_code-server.
+armbian-config --api module_zsh install
 
 # Clone a small set of armbian-org repos directly into code-server's
 # workspace so they appear at /config/workspace/<repo> in the IDE. The
