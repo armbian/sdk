@@ -11,8 +11,20 @@
 set -euo pipefail
 
 apt-get update
-apt-get install -y --no-install-recommends git tig nodejs npm armbian-zsh
+# armbian-zsh isn't installable directly at customize-image time —
+# the Armbian apt repo isn't yet wired up in the chroot, so apt
+# returns 'unable to locate package'. Install armbian-config instead
+# and then dispatch via its --api flag below; module_zsh handles the
+# repo plumbing and pulls armbian-zsh / zsh-common / zsh in one shot.
+apt-get install -y --no-install-recommends git tig nodejs npm armbian-config
 install -m 0755 /tmp/overlay/provisioning.sh /root/provisioning.sh
+
+# Install zsh via armbian-config's module_zsh. Pulls the armbian-zsh /
+# zsh-common / zsh package set, refreshes /etc/skel from the matching
+# dotfiles, and flips root's login shell to /bin/zsh — the full
+# Armbian-flavoured setup. Same `armbian-config --api module_<name>
+# <verb>` invocation pattern provisioning.sh uses for module_code-server.
+armbian-config --api module_zsh install
 
 # Pre-install the Claude Code CLI host-side so `claude` is on the
 # armbian user's PATH from a plain SSH session too. (provisioning.sh
