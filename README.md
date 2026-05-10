@@ -14,7 +14,6 @@ Daily builds from this repository's [GitHub Action](.github/workflows/action.yml
 Download a `.img.qcow2` from the [latest release](https://github.com/armbian/sdk/releases/latest) and boot it under any QEMU/KVM-capable hypervisor.
 
 - **Default credentials:** `armbian` / `armbian` (configured in [userpatches/firstboot.conf](userpatches/firstboot.conf))
-- **Default shell:** `zsh` for the `armbian` user (set via `PRESET_USER_SHELL` in the same file)
 - **code-server** (browser-based VS Code) on port `8443`
 - **Build framework** checked out at `~/workspace/build`
 
