@@ -15,9 +15,14 @@ jobs:
       actions: write
     steps:
       # checkout this repository
-      - uses: actions/checkout@v6
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@a5ad31d6a139d249332a2605b85202e8c0b78450 # v2.19.1
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       # prevent GitHub from suspending cronjob
-      - uses: liskin/gh-workflow-keepalive@v1
+      - uses: liskin/gh-workflow-keepalive@f72ff1a1336129f29bf0166c0fd0ca6cf1bcb38c # v1.2.1
 
   Matrix:
     needs: Keep
@@ -36,7 +41,12 @@ jobs:
     name: "${{ matrix.os }},${{ matrix.board }}${{ matrix.extension }}"
     steps:
 
-      - uses: armbian/build@main
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@a5ad31d6a139d249332a2605b85202e8c0b78450 # v2.19.1
+        with:
+          egress-policy: audit
+
+      - uses: armbian/build@761d04edac790c552380061d5c2ff0b780ff18d4 # main
         with:
           # mandatory
           armbian_token:              "${{ secrets.GITHUB_TOKEN }}"          # GitHub installation access token
@@ -96,6 +106,11 @@ jobs:
     permissions:
       contents: write
     steps:
+
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@a5ad31d6a139d249332a2605b85202e8c0b78450 # v2.19.1
+        with:
+          egress-policy: audit
 
       - name: Download per-image manifests from the release
         env:
