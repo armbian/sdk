@@ -7,7 +7,7 @@
 
 The **Armbian SDK** publishes ready-to-deploy generic **Armbian** images preloaded with the toolchain, source repositories, and dependencies needed to develop on the Armbian platform — drop one onto a cloud provider, **Proxmox**, or any **QEMU/KVM**-capable hypervisor and start building immediately.
 
-Daily builds from this repository's [GitHub Action](.github/workflows/action.yml) target **`uefi-x86`** and **`uefi-arm64`** on **Ubuntu Noble** and **Debian Trixie** with the **`cloud`** kernel, published as raw `.img.xz` and `.img.qcow2`.
+Daily builds from this repository's [GitHub Action](.github/workflows/build-armbian-sdk.yml) target **`uefi-x86`** and **`uefi-arm64`** on **Ubuntu Noble** and **Debian Trixie** with the **`cloud`** kernel, published as raw `.img.xz` and `.img.qcow2`.
 
 ## Quick Start
 
@@ -27,7 +27,7 @@ Download a `.img.qcow2` from the [latest release](https://github.com/armbian/sdk
 
 ## How It's Built
 
-The [GitHub Action](.github/workflows/action.yml) drives a `{board} × {release} × {extension}` matrix through the [armbian/build](https://github.com/armbian/build) composite action. Each cell runs the build chroot's [customize-image.sh](userpatches/customize-image.sh) (clones, build deps, key seeding) and stages [provisioning.sh](userpatches/overlay/provisioning.sh) for first boot (code-server install, extension provisioning, ownership handover). After the matrix completes, an aggregator job merges per-image manifests into a single `armbian-images.json` and promotes the release from pre-release to latest.
+The [GitHub Action](.github/workflows/build-armbian-sdk.yml) drives a `{board} × {release} × {extension}` matrix through the [armbian/build](https://github.com/armbian/build) composite action. Each cell runs the build chroot's [customize-image.sh](userpatches/customize-image.sh) (clones, build deps, key seeding) and stages [provisioning.sh](userpatches/overlay/provisioning.sh) for first boot (code-server install, extension provisioning, ownership handover). After the matrix completes, an aggregator job merges per-image manifests into a single `armbian-images.json` and promotes the release from pre-release to latest.
 
 ## Resources
 

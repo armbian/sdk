@@ -30,7 +30,7 @@ jobs:
       matrix:
         # Workflows to retry. Bare filename (without .yml).
         script:
-          - action
+          - build-armbian-sdk
           - infrastructure-dispatch-download-index
 
     name: "${{ matrix.script }}"
