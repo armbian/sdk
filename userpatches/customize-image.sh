@@ -31,8 +31,6 @@ REPOS=(
     build
     configng
     documentation
-    website
-    imager
 )
 WORKSPACE=/armbian/code-server/config/workspace
 mkdir -p "$WORKSPACE"
