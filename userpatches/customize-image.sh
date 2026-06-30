@@ -29,8 +29,6 @@ npm install -g @anthropic-ai/claude-code
 # inside the build chroot.
 REPOS=(
     build
-    configng
-    documentation
 )
 WORKSPACE=/armbian/code-server/config/workspace
 mkdir -p "$WORKSPACE"
