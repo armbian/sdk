@@ -95,6 +95,10 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    env:
+      # Job-level so the download-index dispatch step can gate on it in `if:`
+      # (a step's own env isn't reliably visible to its own if condition).
+      DISPATCH_SECRET: ${{ secrets.ACCESS_TOKEN }}
     steps:
 
       - name: Download per-image manifests from the release
@@ -141,3 +145,24 @@ jobs:
             --prerelease=false \
             --latest \
             --repo "${{ github.repository }}"
+
+      # Kick armbian.github.io to regenerate its download index against the
+      # freshly promoted SDK release. Done here (in the build run) rather than
+      # in a separate workflow_run-triggered workflow so it shares this run's
+      # success gate and its retry: if the dispatch flakes, the Aggregate job
+      # fails and auto-retry-stalled.yml re-runs it. Soft-skips if ACCESS_TOKEN
+      # isn't configured, and only on the canonical repo.
+      - name: Dispatch download-index regen (armbian.github.io)
+        if: ${{ needs.Matrix.result == 'success' && github.repository_owner == 'armbian' && env.DISPATCH_SECRET != '' }}
+        uses: peter-evans/repository-dispatch@28959ce8df70de7be546dd1250a005dd32156697 # v4.0.1
+        with:
+          token: ${{ secrets.ACCESS_TOKEN }}
+          repository: armbian/armbian.github.io
+          event-type: "Data: Update download index"
+          client-payload: >-
+            {
+              "source_workflow": "${{ github.workflow }}",
+              "source_run_id":   "${{ github.run_id }}",
+              "source_repo":     "${{ github.repository }}",
+              "source_sha":      "${{ github.sha }}"
+            }
