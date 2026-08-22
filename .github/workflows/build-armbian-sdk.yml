@@ -25,7 +25,7 @@ jobs:
       fail-fast: false
       matrix:
         board: ["uefi-x86","uefi-arm64"]
-        os: ["noble","resolute","trixie"]
+        os: ["resolute","trixie"]
         extension: [",image-output-qcow2",""]
         include:
         - board: uefi-x86
@@ -56,7 +56,7 @@ jobs:
 
             ### Targets
 
-            x86 (`uefi-x86`) and arm64 (`uefi-arm64`), built on Ubuntu (`noble`, `resolute`) and Debian (`trixie`), using the `cloud` kernel.
+            x86 (`uefi-x86`) and arm64 (`uefi-arm64`), built on Ubuntu (`resolute`) and Debian (`trixie`), using the `cloud` kernel.
 
             ### Formats
 
