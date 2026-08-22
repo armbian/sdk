@@ -26,7 +26,7 @@ jobs:
       matrix:
         board: ["uefi-x86","uefi-arm64"]
         os: ["resolute","trixie"]
-        extension: [",image-output-qcow2",""]
+        extension: [",image-output-qcow2",",image-output-iso"]
         include:
         - board: uefi-x86
           runner: ubuntu-24.04
@@ -60,7 +60,7 @@ jobs:
 
             ### Formats
 
-            Raw `.img.xz` and `.img.qcow2`.
+            Raw `.img.xz`, `.img.qcow2`, and `.iso`.
 
             ### Inside the image
 
