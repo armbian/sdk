@@ -1,11 +1,16 @@
-name: "Maintenance: Watchdog"
-# Periodically poll the latest run of each watched workflow; if it
-# finished in 'failure' and hasn't already burned through the retry
-# budget, kick off rerun-failed-jobs. Catches transient network
-# breakage during apt/git/rsync/docker-pull steps that would
-# otherwise need manual intervention.
+name: "Maintenance: Watchdog (download-index)"
+# Periodically poll the latest run of the infrastructure-dispatch-download-index
+# workflow; if it finished in 'failure' and hasn't already burned through the
+# retry budget, kick off rerun-failed-jobs. Catches transient network breakage
+# during apt/git/rsync/docker-pull steps that would otherwise need manual
+# intervention.
 #
 # Same shape as armbian/docker-armbian-build's maintenance-watchdog.
+#
+# Scope: only infrastructure-dispatch-download-index. build-armbian-sdk has its
+# own event-driven retry in auto-retry-stalled.yml (fires on run completion,
+# with a systemic >50%-green guard); listing it here too would double-retry the
+# same failed run.
 on:
   schedule:
     - cron: '*/15 * * * *'
@@ -29,8 +34,8 @@ jobs:
       max-parallel: 4
       matrix:
         # Workflows to retry. Bare filename (without .yml).
+        # (build-armbian-sdk is handled by auto-retry-stalled.yml instead.)
         script:
-          - build-armbian-sdk
           - infrastructure-dispatch-download-index
 
     name: "${{ matrix.script }}"
