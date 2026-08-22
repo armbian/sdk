@@ -36,6 +36,11 @@ jobs:
     name: "${{ matrix.os }},${{ matrix.board }}${{ matrix.extension }}"
     steps:
 
+      # cleaning self hosted runners: reset the workspace and ensure host
+      # dependencies (docker buildx, tree, apt/oci/ccache proxies) before building
+      - name: "Runner clean ${{ matrix.os }},${{ matrix.board }}${{ matrix.extension }}"
+        uses: armbian/actions/runner-clean@main
+
       - uses: armbian/build@main # main
         with:
           # mandatory
