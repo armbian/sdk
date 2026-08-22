@@ -60,7 +60,9 @@ jobs:
 
             ### Formats
 
-            Raw `.img.xz`, `.img.qcow2`, and `.iso`.
+            Raw `.img.xz`, `.img.qcow2`, and `.iso`. The images are hosted on
+            Armbian storage at <https://dl.armbian.com/sdk/> (too large for
+            GitHub release assets); this release carries only their manifests.
 
             ### Inside the image
 
@@ -78,15 +80,43 @@ jobs:
 
             ### Manifest
 
-            `armbian-images.json` (aggregated across the matrix) and `<image>.assets.json` (per-image) are published alongside the assets for programmatic consumption.
+            `armbian-images.json` (aggregated across the matrix) and `<image>.assets.json` (per-image) are published on this release for programmatic consumption; each manifest's `file_url` points at the image on <https://dl.armbian.com/sdk/>.
           armbian_pgp_key:            "${{ secrets.GPG_KEY1 }}"              # key for signing
           armbian_pgp_password:       "${{ secrets.GPG_PASSPHRASE1 }}"       # password for key
-          # SDK images publish to this repo's GitHub release, not dl.armbian.com.
-          # Empty `armbian_download_repository` selects the flat URL shape
-          # `<base>/<filename>` and clears the redi_url* fields (no friendly-
-          # redirect convention exists for GitHub releases).
-          armbian_download_base_url:  "https://github.com/${{ github.repository }}/releases/download/${{ github.run_id }}"
+          # The ~1.5 GiB images are too big for GitHub release storage, so they
+          # are rsync'd to dl.armbian.com below instead. Restrict the build
+          # action's own release upload to just the tiny per-image manifests
+          # (`*.assets.json`, needed by the Aggregate job) — the images, their
+          # checksums and signatures go to storage.
+          armbian_artifacts:          "build/output/images/*.assets.json"
+          # Download URLs in the manifests point at Armbian storage, where the
+          # images actually live. Empty `armbian_download_repository` selects the
+          # flat URL shape `<base>/<filename>` and clears the redi_url* fields
+          # (no friendly-redirect convention exists for the SDK area yet).
+          armbian_download_base_url:  "https://dl.armbian.com/sdk"
           armbian_download_repository: ""
+
+      # Ship the built images to Armbian's own storage (served at
+      # https://dl.armbian.com/sdk/). GitHub release storage can't hold a
+      # ~17 GiB/run matrix; only the small manifests stay on the release.
+      - name: "Install upload SSH key"
+        uses: shimataro/ssh-key-action@87a8f067114a8ce263df83e9ed5c849953548bc3 # v2.8.1
+        with:
+          key: ${{ secrets.KEY_UPLOAD }}
+          known_hosts: ${{ secrets.KNOWN_HOSTS_ARMBIAN_UPLOAD }}
+          if_key_exists: replace
+
+      - name: "Upload images to dl.armbian.com storage"
+        run: |
+          set -euo pipefail
+          # Push the images + their .sha/.asc/.txt sidecars; the .assets.json
+          # manifests are excluded (they ride on the GitHub release instead).
+          # Filenames carry the version + board + variant, so parallel matrix
+          # cells never collide — no --delete, additive into the shared dir.
+          rsync -avh --exclude='*.assets.json' \
+            -e "ssh -p 10023 -o StrictHostKeyChecking=accept-new" \
+            build/output/images/ \
+            upload@rsync.armbian.com:/storage/www/dl/sdk/
 
   Aggregate:
     name: "Aggregate per-cell asset manifests"
