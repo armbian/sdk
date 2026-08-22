@@ -29,10 +29,10 @@ jobs:
         extension: [",image-output-qcow2",",image-output-iso"]
         include:
         - board: uefi-x86
-          runner: ubuntu-24.04
+          runner: '[ "self-hosted", "fast", "X64" ]'
         - board: uefi-arm64
-          runner: ubuntu-22.04-arm
-    runs-on: ${{ matrix.runner }}
+          runner: '[ "self-hosted", "fast", "ARM64" ]'
+    runs-on: ${{ fromJSON(matrix.runner) }}
     name: "${{ matrix.os }},${{ matrix.board }}${{ matrix.extension }}"
     steps:
 
