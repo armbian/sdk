@@ -10,10 +10,10 @@
 #   * run_attempt < 10     -> up to 10 attempts total. GitHub-side flakiness comes in
 #                             bursts, so give it some budget before a run is left red;
 #                             a genuine failure still surfaces once the budget's spent.
-#   * > 50% of jobs green  -> a minority of failures against a mostly-green run looks
-#                             like stalls -> retry. If half or more of the run's jobs
-#                             failed it looks systemic (bad commit / infra outage) -> do
-#                             NOT mass-retry; leave it red and warn for a human.
+#   * >= 30% of jobs green -> a minority of failures against a mostly-green run looks
+#                             like stalls -> retry. If fewer than 30% of the run's jobs
+#                             succeeded it looks systemic (bad commit / infra outage) ->
+#                             do NOT mass-retry; leave it red and warn for a human.
 #
 # Note: we wait for the run to finish rather than cancelling it mid-flight. The matrix
 # is fail-fast:false, so the good jobs complete and produce artifacts even while a few
@@ -49,10 +49,10 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GH_TOKEN: ${{ secrets.ACCESS_TOKEN || github.token }}
-      # Auto-retry only when the run is mostly green: more than this percentage of
-      # jobs must have succeeded. At or below it, the failures look systemic rather
+      # Auto-retry only when the run is mostly green: at least this percentage of
+      # jobs must have succeeded. Below it, the failures look systemic rather
       # than like runner stalls, so leave it red (raise/lower to taste).
-      MIN_SUCCESS_PERCENT: "50"
+      MIN_SUCCESS_PERCENT: "30"
     steps:
       - name: "Re-run failed jobs if the failure count looks like stalls"
         run: |
@@ -84,13 +84,13 @@ jobs:
             exit 0
           fi
 
-          # Systemic guard: only retry when the run is mostly green — strictly more
-          # than MIN_SUCCESS_PERCENT% of jobs succeeded. Integer math (no bc):
-          #   succeeded*100 > MIN_SUCCESS_PERCENT*total  ->  retry.
+          # Systemic guard: only retry when the run is mostly green — at least
+          # MIN_SUCCESS_PERCENT% of jobs succeeded. Integer math (no bc):
+          #   succeeded*100 >= MIN_SUCCESS_PERCENT*total  ->  retry.
           if [ "$IGNORE_THRESHOLD" != "true" ] && [ "$total" -gt 0 ] \
-             && [ $(( succeeded * 100 )) -le $(( MIN_SUCCESS_PERCENT * total )) ]; then
+             && [ $(( succeeded * 100 )) -lt $(( MIN_SUCCESS_PERCENT * total )) ]; then
             pct=$(( succeeded * 100 / total ))
-            echo "::warning title=Not auto-retrying::only ${pct}% of jobs succeeded (${succeeded}/${total}); need > ${MIN_SUCCESS_PERCENT}%. Looks systemic, not runner stalls. Leaving it red — re-run manually with ignore_threshold=true to force. Inspect run ${RUN_ID}."
+            echo "::warning title=Not auto-retrying::only ${pct}% of jobs succeeded (${succeeded}/${total}); need >= ${MIN_SUCCESS_PERCENT}%. Looks systemic, not runner stalls. Leaving it red — re-run manually with ignore_threshold=true to force. Inspect run ${RUN_ID}."
             exit 0
           fi
 
